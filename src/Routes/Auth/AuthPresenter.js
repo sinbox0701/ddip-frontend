@@ -2,7 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Button from "../../Components/Button";
 import Input from "../../Components/Input";
- 
+import HideInput from "../../Components/HideInput"
+
 const Wrapper = styled.div`
     min-height:80vh;
     display:flex;
@@ -55,7 +56,10 @@ export default ({
     certification,
     email,
     setAction,
-    onSubmit
+    onSubmit,
+    onClick,
+    open,
+    setOpen
 }) => (
     <Wrapper>
         <Form>
@@ -72,7 +76,10 @@ export default ({
                 <Input placeholder={"Password"} {...password} type="password" />
                 <Input placeholder={"gender"} {...gender}/>
                 <Input placeholder={"telephone"} {...tel} />
-                <Input placeholder={"certification number"} {...certification} />
+                <HideInput value="Certificate" onClick={onClick}/>
+                {open ===  true ?
+                <Input placeholder={"certification"} {...certification} /> : <></>
+                }
                 <Button text={"Sign up"} />
             </form>
             )}

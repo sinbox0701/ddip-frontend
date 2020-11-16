@@ -3,23 +3,19 @@ import AuthPresenter from "./AuthPresenter";
 import useInput from "../../Hooks/useInput";
 import { useMutation } from "react-apollo-hooks";
 import { toast } from "react-toastify";
-import { CREATE_ACCOUNT, LOGIN_USER, SIGN_UP } from "./AuthQueries";
+import { CREATE_ACCOUNT, LOCAL_LOG_IN, LOGIN_USER, SIGN_UP } from "./AuthQueries";
  
 export default () => {
     const [action,setAction] = useState("logIn");
+    const [open, setOpen] = useState(false);
     const username = useInput("");
     const email = useInput("");
     const password = useInput("");
     const gender = useInput("");
     const tel = useInput("");
+    const certification = useInput("");
 
     const [certificationAccount] = useMutation(SIGN_UP,{
-        update:(_,{data}) => {
-            const {certification} = data;
-            if(!certification){
-                toast.error("Message Value Error");
-            }
-        },
         variables:{tel:tel.value}
     });
     const [createAccount] = useMutation(CREATE_ACCOUNT,{
@@ -28,7 +24,8 @@ export default () => {
             email:email.value,
             password:password.value,
             gender:gender.value,
-            tel:tel.value
+            tel:tel.value,
+            certification:certification.value
         }
     });
     const [loginUser] = useMutation(LOGIN_USER,{
@@ -36,20 +33,40 @@ export default () => {
             email:email.value,
             password:password.value
         }
-    })
- 
-    const onSubmit = (e) =>{
+    });
+    const [localLogInMutation] = useMutation(LOCAL_LOG_IN);
+
+    const onClick = async(e) => {
+        e.preventDefault();
+        await certificationAccount();
+        setOpen(true);
+    };
+
+    const onSubmit = async(e) =>{
         e.preventDefault();
         if(action === "signUp"){
-            if(tel !== ""){
-                certificationAccount();
+            if(username!=="" && email !== "" && password !=="" && gender !== "" && tel !== "" && certification!==""){
+                await createAccount();
+                setAction("logIn");
             }else{
-                toast.error("Telephone is required");
+                toast.error("All Field are required");
             }
         }
         else if(action === "logIn"){
             if(email !== "" && password !=""){
-                loginUser();
+                try{                    
+                    const {
+                        data : {logInUser:token}
+                    } = await loginUser();
+                    console.log(token);
+                    if(token!=="" || token!==undefined){
+                        localLogInMutation({variables:{token}});
+                    }else{
+                        throw Error();
+                    }
+                }catch{
+                    toast.error("Login Error")
+                }
             }
             else{
                 toast.error("All Fields are required");
@@ -66,7 +83,11 @@ export default () => {
       gender={gender}
       tel={tel}
       password={password}
-      onSubmit={onSubmit}  
+      certification={certification}
+      onSubmit={onSubmit} 
+      onClick={onClick}
+      open={open}
+      setOpen={setOpen} 
     />
     );
 };

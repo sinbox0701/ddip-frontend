@@ -27,11 +27,11 @@ export const CREATE_ACCOUNT = gql`
 `;
 
 export const LOGIN_USER = gql`
-    mutation loginUser(
+    mutation logInUser(
         $email:String!
         $password:String!
     ){
-        loginUser(
+        logInUser(
             email:$email
             password:$password
         )
