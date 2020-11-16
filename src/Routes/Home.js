@@ -1,1 +1,5 @@
-export default () => "Home";
+export default () => {
+    return (
+        <div>home</div>
+    );
+};

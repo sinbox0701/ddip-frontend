@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Button from "../../Components/Button";
 import Input from "../../Components/Input";
 import HideInput from "../../Components/HideInput"
+import { Ddip } from "../../Components/Icons";
 
 const Wrapper = styled.div`
     min-height:80vh;
@@ -63,6 +64,7 @@ export default ({
 }) => (
     <Wrapper>
         <Form>
+            <Ddip/>
             {action === "logIn" ? (
             <form onSubmit={onSubmit}>
                 <Input placeholder={"Email"} {...email} type="email"/>
